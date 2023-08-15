@@ -1,7 +1,7 @@
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import MyHeader from "./components/MyHeader";
-import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
+import { PingButton } from "./components/PingButton";
 
 const App = () => {
   const { publicKey } = useWallet();
@@ -21,10 +21,11 @@ const App = () => {
   return (
     <>
       <MyHeader />
+      <p>Endpoint: {connection.rpcEndpoint}</p>
       <p>Balance : {balance}</p>
 
       <div className="mt1">
-        <Button variant="contained">Hello mui world</Button>
+        <PingButton />
       </div>
     </>
   );
