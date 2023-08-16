@@ -10,7 +10,7 @@ const PROGRAM_DATA_PUBLIC_KEY = new Web3.PublicKey(
   "Ah9K7dQ8EHaZqcAsgBW8w37yN2eAy3koFmUn4x3CJtod"
 );
 
-export const PingButton: FC = () => {
+const PingButton: FC = () => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const [transactionLink, setTransactionLink] = useState<string>("");
@@ -62,3 +62,5 @@ export const PingButton: FC = () => {
     </>
   );
 };
+
+export default PingButton;

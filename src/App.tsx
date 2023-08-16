@@ -1,9 +1,9 @@
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import MyHeader from "./components/MyHeader";
 import { useEffect, useState } from "react";
-import { PingButton } from "./components/PingButton";
+import PingButton from "./components/PingButton";
+import TransferTo from "./components/TransferTo";
 import NameValue from "./components/NameValue";
-
 import { Divider } from "@mui/material";
 
 const App = () => {
@@ -33,6 +33,8 @@ const App = () => {
       <div className="mt1">
         <PingButton />
       </div>
+      <Divider sx={{ margin: "1rem" }}>Transfer SOL To:</Divider>
+      <TransferTo />
     </>
   );
 };
