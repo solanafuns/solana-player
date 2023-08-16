@@ -2,6 +2,9 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import MyHeader from "./components/MyHeader";
 import { useEffect, useState } from "react";
 import { PingButton } from "./components/PingButton";
+import NameValue from "./components/NameValue";
+
+import { Divider } from "@mui/material";
 
 const App = () => {
   const { publicKey } = useWallet();
@@ -21,8 +24,11 @@ const App = () => {
   return (
     <>
       <MyHeader />
-      <p>Endpoint: {connection.rpcEndpoint}</p>
-      <p>Balance : {balance}</p>
+
+      <Divider sx={{ margin: "1rem" }}>solana basic</Divider>
+      <NameValue name="Endpoint" value={connection.rpcEndpoint} />
+      <NameValue name="Balance" value={balance / 10 ** 9} />
+      <Divider sx={{ margin: "1rem" }}>Example bind!</Divider>
 
       <div className="mt1">
         <PingButton />

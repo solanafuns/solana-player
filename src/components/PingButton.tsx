@@ -1,6 +1,6 @@
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as Web3 from "@solana/web3.js";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Button } from "@mui/material";
 
 const PROGRAM_ID = new Web3.PublicKey(
@@ -13,6 +13,7 @@ const PROGRAM_DATA_PUBLIC_KEY = new Web3.PublicKey(
 export const PingButton: FC = () => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
+  const [transactionLink, setTransactionLink] = useState<string>("");
 
   const onClick = () => {
     if (!connection || !publicKey) {
@@ -36,14 +37,28 @@ export const PingButton: FC = () => {
     transaction.add(instruction);
     sendTransaction(transaction, connection).then((sig) => {
       console.log(
-        `Explorer URL: https://explorer.solana.com/tx/${sig}?cluster=devnet`
+        `Explorer URL: https://explorer.solana.com/tx/${sig}?cluster=devnet` +
+          ""
+      );
+      setTransactionLink(
+        `https://explorer.solana.com/tx/${sig}?cluster=devnet`
       );
     });
   };
 
   return (
-    <Button variant="contained" onClick={onClick}>
-      Ping Solana!
-    </Button>
+    <>
+      <div>
+        <Button variant="contained" onClick={onClick}>
+          Ping Solana!
+        </Button>
+      </div>
+
+      <div className="mt1">
+        <a target="_blank" href={transactionLink} rel="noreferrer">
+          {transactionLink}
+        </a>
+      </div>
+    </>
   );
 };
