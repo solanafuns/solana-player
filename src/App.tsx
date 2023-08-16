@@ -5,6 +5,7 @@ import PingButton from "./components/PingButton";
 import TransferTo from "./components/TransferTo";
 import NameValue from "./components/NameValue";
 import { Divider } from "@mui/material";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 const App = () => {
   const { publicKey } = useWallet();
@@ -16,7 +17,7 @@ const App = () => {
     const asyncFun = async () => {
       if (!publicKey) return;
       const balance = await connection.getBalance(publicKey);
-      setBalance(balance);
+      setBalance(balance / LAMPORTS_PER_SOL);
     };
     asyncFun();
   }, [publicKey, connection]);
@@ -27,7 +28,7 @@ const App = () => {
 
       <Divider sx={{ margin: "1rem" }}>solana basic</Divider>
       <NameValue name="Endpoint" value={connection.rpcEndpoint} />
-      <NameValue name="Balance" value={balance / 10 ** 9} />
+      <NameValue name="Balance" value={balance} />
       <Divider sx={{ margin: "1rem" }}>Example bind!</Divider>
 
       <div className="mt1">
