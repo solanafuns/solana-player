@@ -1,7 +1,8 @@
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as Web3 from "@solana/web3.js";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Button } from "@mui/material";
+import { TransactionLinkProps, commonML } from "../utils";
 
 const PROGRAM_ID = new Web3.PublicKey(
   "ChT1B39WKLS8qUrkLvFDXMhEJ4F1XZzwUNHUt4AU9aVa"
@@ -10,18 +11,15 @@ const PROGRAM_DATA_PUBLIC_KEY = new Web3.PublicKey(
   "Ah9K7dQ8EHaZqcAsgBW8w37yN2eAy3koFmUn4x3CJtod"
 );
 
-const PingButton: FC = () => {
+const PingButton: FC<TransactionLinkProps> = (props: TransactionLinkProps) => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
-  const [transactionLink, setTransactionLink] = useState<string>("");
 
-  const onClick = () => {
+  const onClick = async () => {
     if (!connection || !publicKey) {
       alert("Please connect your wallet first lol");
       return;
     }
-
-    const transaction = new Web3.Transaction();
 
     const instruction = new Web3.TransactionInstruction({
       keys: [
@@ -34,32 +32,31 @@ const PingButton: FC = () => {
       programId: PROGRAM_ID,
     });
 
-    transaction.add(instruction);
-    sendTransaction(transaction, connection).then((sig) => {
+    const blockHash = await connection.getLatestBlockhash();
+
+    console.log(connection);
+
+    const messageV0 = new Web3.TransactionMessage({
+      payerKey: publicKey,
+      instructions: [instruction],
+      recentBlockhash: blockHash.blockhash,
+    }).compileToV0Message();
+
+    console.log(messageV0);
+
+    const trx = new Web3.VersionedTransaction(messageV0);
+    sendTransaction(trx, connection).then((sig) => {
       console.log(
-        `Explorer URL: https://explorer.solana.com/tx/${sig}?cluster=devnet` +
-          ""
+        `Explorer URL: https://solscan.io/tx/${sig}?cluster=devnet` + ""
       );
-      setTransactionLink(
-        `https://explorer.solana.com/tx/${sig}?cluster=devnet`
-      );
+      props.callback(`https://solscan.io/tx/${sig}?cluster=devnet`);
     });
   };
 
   return (
-    <>
-      <div>
-        <Button variant="contained" onClick={onClick}>
-          Ping Solana!
-        </Button>
-      </div>
-
-      <div className="mt1">
-        <a target="_blank" href={transactionLink} rel="noreferrer">
-          {transactionLink}
-        </a>
-      </div>
-    </>
+    <Button variant="contained" onClick={onClick} color="info" sx={commonML}>
+      Ping Solana!
+    </Button>
   );
 };
 

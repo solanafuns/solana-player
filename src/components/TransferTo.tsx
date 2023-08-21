@@ -3,6 +3,7 @@ import { commonSx } from "../utils";
 import { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as Web3 from "@solana/web3.js";
+import { TransactionLink } from "./TransactionLink";
 
 const TransferTo = () => {
   const { publicKey, sendTransaction } = useWallet();
@@ -24,14 +25,15 @@ const TransferTo = () => {
     });
   }, [publicKey]);
 
-  const onTransfer = () => {
+  const onTransfer = async () => {
     if (!connection || !publicKey) {
       alert("Please connect your wallet first lol");
       return;
     }
 
     const toPublicKey = new Web3.PublicKey(params.recipient);
-    const transaction = new Web3.Transaction();
+
+    const blockHash = await connection.getLatestBlockhash();
 
     const instruction = Web3.SystemProgram.transfer({
       fromPubkey: publicKey,
@@ -39,15 +41,19 @@ const TransferTo = () => {
       lamports: Web3.LAMPORTS_PER_SOL * params.value,
     });
 
-    transaction.add(instruction);
-    sendTransaction(transaction, connection).then((sig: any) => {
+    const messageV0 = new Web3.TransactionMessage({
+      payerKey: publicKey,
+      instructions: [instruction, instruction, instruction],
+      recentBlockhash: blockHash.blockhash,
+    }).compileToV0Message();
+
+    const trx = new Web3.VersionedTransaction(messageV0);
+
+    sendTransaction(trx, connection).then((sig: any) => {
       console.log(
-        `Explorer URL: https://explorer.solana.com/tx/${sig}?cluster=devnet` +
-          ""
+        `Explorer URL: https://solscan.io/tx/${sig}?cluster=devnet` + ""
       );
-      setTransactionLink(
-        `https://explorer.solana.com/tx/${sig}?cluster=devnet`
-      );
+      setTransactionLink(`https://solscan.io/tx/${sig}?cluster=devnet`);
     });
   };
 
@@ -91,11 +97,7 @@ const TransferTo = () => {
         </Button>
       </div>
 
-      <div className="mt1">
-        <a target="_blank" href={transactionLink} rel="noreferrer">
-          {transactionLink}
-        </a>
-      </div>
+      <TransactionLink link={transactionLink} />
     </Stack>
   );
 };
