@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 import { TransactionLinkProps, commonML } from "../utils";
 
 const PROGRAM_ID = new Web3.PublicKey(
-  "EXhGwzuCNQpHmPETzXYz2VYDG7Afr8fNnYmm4tZndYzR"
+  "2wDcr9M9fd3yuwaVXuYS22b8z9x8WPT4W8MVUJ6dy8DM"
 );
 // const PROGRAM_DATA_PUBLIC_KEY = new Web3.PublicKey(
 //   "Dy6mBH4YeqJCRZohd39iSFaf4jyLaxPeBakbZwt1jToL"
@@ -22,13 +22,13 @@ const PingDataButton: FC<TransactionLinkProps> = (
       return;
     }
     const [pda] = Web3.PublicKey.findProgramAddressSync(
-      [publicKey?.toBytes(), Buffer.from("helloxssssxx")], // new TextEncoder().encode(movie.title)],
+      [publicKey?.toBytes(), Buffer.from("pda-usage")], // new TextEncoder().encode(movie.title)],
       new Web3.PublicKey(PROGRAM_ID)
     );
 
     console.log(pda);
     console.log(pda.toBase58(), "------------");
-    debugger;
+
     if (!connection || !publicKey) {
       alert("Please connect your wallet first lol");
       return;
