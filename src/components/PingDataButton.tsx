@@ -50,15 +50,14 @@ const PingDataButton: FC<TransactionLinkProps> = (
           programId: PROGRAM_ID,
         })
       );
-    } else {
-      instructions.push(
-        new Web3.TransactionInstruction({
-          keys: [{ pubkey: shareAccount, isSigner: false, isWritable: true }],
-          data: Buffer.from("hello world"),
-          programId: PROGRAM_ID,
-        })
-      );
     }
+    instructions.push(
+      new Web3.TransactionInstruction({
+        keys: [{ pubkey: shareAccount, isSigner: false, isWritable: true }],
+        data: Buffer.from("hello world"),
+        programId: PROGRAM_ID,
+      })
+    );
 
     console.log(instructions);
 

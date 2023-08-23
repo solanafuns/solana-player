@@ -7,6 +7,6 @@ export interface TransactionLinkProps {
 }
 
 export const transactionLink = (sig: string): string => {
-  // return `https://solscan.io/tx/${sig}?cluster=devnet`;
-  return `https://explorer.solana.com/tx/${sig}?cluster=custom&customUrl=http://localhost:8899`;
+  return `https://solscan.io/tx/${sig}?cluster=devnet`;
+  // return `https://explorer.solana.com/tx/${sig}?cluster=custom&customUrl=http://localhost:8899`;
 };
