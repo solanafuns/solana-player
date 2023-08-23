@@ -2,14 +2,12 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as Web3 from "@solana/web3.js";
 import { FC } from "react";
 import { Button } from "@mui/material";
-import { TransactionLinkProps, commonML } from "../utils";
+import { TransactionLinkProps, commonML, transactionLink } from "../utils";
+import { MATH_STUFF_SIZE } from "../models/MathStuffSum";
 
 const PROGRAM_ID = new Web3.PublicKey(
-  "2wDcr9M9fd3yuwaVXuYS22b8z9x8WPT4W8MVUJ6dy8DM"
+  "GK9t5Y2HnaWrmufdvoxjz8w4ef7b5KGD85jK8JxidkGo"
 );
-// const PROGRAM_DATA_PUBLIC_KEY = new Web3.PublicKey(
-//   "Dy6mBH4YeqJCRZohd39iSFaf4jyLaxPeBakbZwt1jToL"
-// );
 
 const PingDataButton: FC<TransactionLinkProps> = (
   props: TransactionLinkProps
@@ -21,43 +19,48 @@ const PingDataButton: FC<TransactionLinkProps> = (
     if (publicKey === null) {
       return;
     }
-    const [pda] = Web3.PublicKey.findProgramAddressSync(
-      [publicKey?.toBytes(), Buffer.from("pda-usage")], // new TextEncoder().encode(movie.title)],
-      new Web3.PublicKey(PROGRAM_ID)
-    );
-
-    console.log(pda);
-    console.log(pda.toBase58(), "------------");
 
     if (!connection || !publicKey) {
       alert("Please connect your wallet first lol");
       return;
     }
 
-    // const pair = Web3.Keypair.generate();
-    // const transaction = new Web3.Transaction();
+    const seed = "creators.dao";
+    const shareAccount = await Web3.PublicKey.createWithSeed(
+      publicKey,
+      seed,
+      PROGRAM_ID
+    );
 
-    const instruction = new Web3.TransactionInstruction({
-      keys: [
-        {
-          pubkey: publicKey,
-          isSigner: true,
-          isWritable: false,
-        },
-        {
-          pubkey: pda,
-          isSigner: false,
-          isWritable: true,
-        },
-        {
-          pubkey: Web3.SystemProgram.programId,
-          isSigner: false,
-          isWritable: false,
-        },
-      ],
-      programId: PROGRAM_ID,
-      data: Buffer.from("hello world"),
-    });
+    console.log(shareAccount);
+    console.log(shareAccount.toBase58());
+
+    const instructions = [];
+    const info = await connection.getAccountInfo(shareAccount);
+    if (info === null) {
+      console.log("need Creating account");
+      instructions.push(
+        Web3.SystemProgram.createAccountWithSeed({
+          fromPubkey: publicKey,
+          newAccountPubkey: shareAccount,
+          basePubkey: publicKey,
+          seed,
+          lamports: Web3.LAMPORTS_PER_SOL,
+          space: MATH_STUFF_SIZE,
+          programId: PROGRAM_ID,
+        })
+      );
+    } else {
+      instructions.push(
+        new Web3.TransactionInstruction({
+          keys: [{ pubkey: shareAccount, isSigner: false, isWritable: true }],
+          data: Buffer.from("hello world"),
+          programId: PROGRAM_ID,
+        })
+      );
+    }
+
+    console.log(instructions);
 
     const {
       value: { blockhash },
@@ -66,16 +69,20 @@ const PingDataButton: FC<TransactionLinkProps> = (
     const messageV0 = new Web3.TransactionMessage({
       payerKey: publicKey,
       recentBlockhash: blockhash,
-      instructions: [instruction],
+      instructions,
     }).compileToV0Message();
 
     const trx = new Web3.VersionedTransaction(messageV0);
-    sendTransaction(trx, connection).then((sig) => {
-      console.log(
-        `Explorer URL: https://solscan.io/tx/${sig}?cluster=devnet` + ""
-      );
-      props.callback(`https://solscan.io/tx/${sig}?cluster=devnet`);
-    });
+
+    sendTransaction(trx, connection)
+      .then((sig) => {
+        const sigLink = transactionLink(sig);
+        console.log(`Explorer URL: ${sigLink} `);
+        props.callback(sigLink);
+      })
+      .catch((err) => {
+        console.log("transaction error : ", err);
+      });
   };
 
   return (

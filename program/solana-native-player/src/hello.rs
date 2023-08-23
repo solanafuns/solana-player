@@ -1,64 +1,33 @@
-use std::io::Write;
-
+use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
-    account_info::AccountInfo,
+    account_info::{next_account_info, AccountInfo},
     msg,
-    program::invoke_signed,
     pubkey::Pubkey,
-    system_instruction,
-    sysvar::{rent::Rent, Sysvar},
 };
 
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub struct MathStuffSum {
+    pub sum: u32,
+}
+
 pub fn process_instruction(accounts: &[AccountInfo], program_id: &Pubkey) {
-    if accounts.len() > 0 {
-        msg!("================= debug account output ================= ");
-        for account in accounts {
-            msg!("account : {:?}", account);
-            msg!("account key : {:?}", account.key);
-        }
-        msg!("================= end account debug ================= ");
+    msg!("================= debug account as counter  ================= ");
+    let mut account_iter = accounts.into_iter();
+    let account = next_account_info(&mut account_iter).unwrap();
 
-        let mut account_iter = accounts.into_iter();
+    assert!(account.owner == program_id);
+    msg!("Debug output:");
+    msg!("Account ID: {}", account.key);
+    msg!("Executable?: {}", account.executable);
+    msg!("Lamports: {:#?}", account.lamports);
 
-        let signer = account_iter.next().unwrap();
-        assert!(signer.is_signer);
-        msg!("siner key : {}", signer.key);
+    let mut math_stuff = MathStuffSum::try_from_slice(&account.data.borrow()).unwrap();
 
-        let pda_account = account_iter.next().unwrap();
-        assert!(pda_account.is_writable);
-        msg!("pda_account : {}", pda_account.key);
+    msg!("current sum: {}", math_stuff.sum);
 
-        let system_program = account_iter.next().unwrap();
-
-        msg!("checking pda account address : ");
-
-        let (pda, bump_seed) =
-            Pubkey::find_program_address(&[signer.key.as_ref(), "pda-usage".as_ref()], program_id);
-
-        assert!(pda_account.key == &pda);
-        msg!("{},{}", pda, bump_seed);
-
-        let rent = Rent::get().unwrap();
-        let rent_lamports = rent.minimum_balance(1024);
-
-        match invoke_signed(
-            &system_instruction::create_account(
-                signer.key,
-                pda_account.key,
-                rent_lamports,
-                1024,
-                program_id,
-            ),
-            &[signer.clone(), pda_account.clone(), system_program.clone()],
-            &[&[signer.key.as_ref(), "pda-usage".as_ref(), &[bump_seed]]],
-        ) {
-            Err(err) => {
-                msg!("error : {}", err)
-            }
-            Ok(()) => {
-                msg!("invoke success");
-                msg!("PDA created: {}", pda);
-            }
-        }
-    }
+    math_stuff.sum += 1;
+    math_stuff
+        .serialize(&mut &mut account.data.borrow_mut()[..])
+        .unwrap();
+    msg!("Debug output complete.");
 }

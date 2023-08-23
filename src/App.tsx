@@ -9,6 +9,7 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import PingDataButton from "./components/PingDataButton";
 import CreateSystemAccount from "./components/createSystemAccount";
 import { TransactionLink } from "./components/TransactionLink";
+import GetAccount from "./components/GetAccount";
 
 const App = () => {
   const { publicKey } = useWallet();
@@ -20,12 +21,16 @@ const App = () => {
   };
 
   const [balance, setBalance] = useState(0);
+  const [latestBlock, setLatestBlock] = useState<any>({});
 
   useEffect(() => {
     const asyncFun = async () => {
       if (!publicKey) return;
       const balance = await connection.getBalance(publicKey);
       setBalance(balance / LAMPORTS_PER_SOL);
+
+      const blockHash = await connection.getLatestBlockhash();
+      setLatestBlock(blockHash);
     };
     asyncFun();
   }, [publicKey, connection]);
@@ -37,16 +42,29 @@ const App = () => {
       <Divider sx={{ margin: "1rem" }}>solana basic</Divider>
       <NameValue name="Endpoint" value={connection.rpcEndpoint} />
       <NameValue name="Balance" value={balance} />
+      <NameValue name="Latest block" value={JSON.stringify(latestBlock)} />
       <Divider sx={{ margin: "1rem" }}>Example caller</Divider>
 
       <div className="mt1">
         <PingButton callback={handleUpdateLink} />
         <CreateSystemAccount callback={handleUpdateLink} />
         <PingDataButton callback={handleUpdateLink} />
-        <TransactionLink link={link} />
       </div>
+
+      <Divider sx={{ margin: "1rem" }}>Get Account:</Divider>
+      <GetAccount />
+
       <Divider sx={{ margin: "1rem" }}>Transfer SOL To:</Divider>
-      <TransferTo />
+      <TransferTo callback={handleUpdateLink} />
+
+      <div>
+        {link === "" ? null : (
+          <div>
+            <Divider sx={{ margin: "1rem" }}>Transaction info:</Divider>
+            <TransactionLink link={link} />
+          </div>
+        )}
+      </div>
     </>
   );
 };

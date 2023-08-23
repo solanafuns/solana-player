@@ -1,15 +1,13 @@
 import { Stack, Button, TextField } from "@mui/material";
-import { commonSx } from "../utils";
-import { useEffect, useState } from "react";
+import { TransactionLinkProps, commonSx, transactionLink } from "../utils";
+import { useEffect, useState, FC } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as Web3 from "@solana/web3.js";
-import { TransactionLink } from "./TransactionLink";
 
-const TransferTo = () => {
+const TransferTo: FC<TransactionLinkProps> = (props: TransactionLinkProps) => {
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
 
-  const [transactionLink, setTransactionLink] = useState<string>("");
   const [params, setParams] = useState<{
     value: number;
     recipient: string;
@@ -50,10 +48,9 @@ const TransferTo = () => {
     const trx = new Web3.VersionedTransaction(messageV0);
 
     sendTransaction(trx, connection).then((sig: any) => {
-      console.log(
-        `Explorer URL: https://solscan.io/tx/${sig}?cluster=devnet` + ""
-      );
-      setTransactionLink(`https://solscan.io/tx/${sig}?cluster=devnet`);
+      const sigLink = transactionLink(sig);
+      console.log(`Explorer URL: $sigLink `);
+      props.callback(sigLink);
     });
   };
 
@@ -96,8 +93,6 @@ const TransferTo = () => {
           Do Transfer
         </Button>
       </div>
-
-      <TransactionLink link={transactionLink} />
     </Stack>
   );
 };

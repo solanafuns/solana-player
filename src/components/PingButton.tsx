@@ -2,7 +2,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as Web3 from "@solana/web3.js";
 import { FC } from "react";
 import { Button } from "@mui/material";
-import { TransactionLinkProps, commonML } from "../utils";
+import { TransactionLinkProps, commonML, transactionLink } from "../utils";
 
 const PROGRAM_ID = new Web3.PublicKey(
   "ChT1B39WKLS8qUrkLvFDXMhEJ4F1XZzwUNHUt4AU9aVa"
@@ -46,10 +46,9 @@ const PingButton: FC<TransactionLinkProps> = (props: TransactionLinkProps) => {
 
     const trx = new Web3.VersionedTransaction(messageV0);
     sendTransaction(trx, connection).then((sig) => {
-      console.log(
-        `Explorer URL: https://solscan.io/tx/${sig}?cluster=devnet` + ""
-      );
-      props.callback(`https://solscan.io/tx/${sig}?cluster=devnet`);
+      const sigLink = transactionLink(sig);
+      console.log(`Explorer URL: $sigLink ` + "");
+      props.callback(sigLink);
     });
   };
 
