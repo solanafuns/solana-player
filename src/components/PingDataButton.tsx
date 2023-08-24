@@ -4,6 +4,7 @@ import { FC } from "react";
 import { Button } from "@mui/material";
 import { TransactionLinkProps, commonML, transactionLink } from "../utils";
 import { MATH_STUFF_SIZE } from "../models/MathStuffSum";
+import { Buffer } from "buffer";
 
 const PROGRAM_ID = new Web3.PublicKey(
   "GK9t5Y2HnaWrmufdvoxjz8w4ef7b5KGD85jK8JxidkGo"
@@ -54,7 +55,7 @@ const PingDataButton: FC<TransactionLinkProps> = (
     instructions.push(
       new Web3.TransactionInstruction({
         keys: [{ pubkey: shareAccount, isSigner: false, isWritable: true }],
-        data: Buffer.from("hello world"),
+        data: Buffer.from("hello solana creators dao"),
         programId: PROGRAM_ID,
       })
     );
