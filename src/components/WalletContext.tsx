@@ -4,7 +4,6 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { FC, ReactNode, useMemo } from "react";
-import { clusterApiUrl } from "@solana/web3.js";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import {
@@ -13,13 +12,11 @@ import {
   BitKeepWalletAdapter,
   CoinbaseWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
+import { endpoint } from "../utils";
 
 const Wallet: FC<{ children: ReactNode }> = ({ children }) => {
   // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
   const network = WalletAdapterNetwork.Devnet;
-
-  // const endpoint = "http://localhost:8899";
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   const wallets = useMemo(
     () => [

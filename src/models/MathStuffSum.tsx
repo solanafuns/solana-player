@@ -11,6 +11,7 @@ class MathStuffSquare {
 const schema = {
   struct: { sum: "u32" },
 };
+
 const MATH_STUFF_SIZE = borsh.serialize(schema, new MathStuffSquare()).length;
 
 export { MathStuffSquare, MATH_STUFF_SIZE };
