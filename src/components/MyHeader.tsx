@@ -1,11 +1,13 @@
 import { CompileTime } from "../compile";
 import { VERSION } from "../utils";
+import GitpodPanel from "./GithubPanel";
 import { MyThemeSwitch } from "./MyThemeContext";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 const MyHeader = () => {
   return (
     <div>
       <WalletMultiButton />
+      <GitpodPanel />
       <MyThemeSwitch />
       <p style={{ float: "right" }}>
         <span>

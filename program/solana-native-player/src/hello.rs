@@ -1,9 +1,12 @@
+use std::alloc::System;
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
     msg,
     pubkey::Pubkey,
+    system_instruction,
 };
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
@@ -14,7 +17,7 @@ pub struct MathStuffSum {
 pub fn process_instruction(accounts: &[AccountInfo], program_id: &Pubkey) -> ProgramResult {
     msg!("================= debug account as counter  ================= ");
 
-    let mut account_iter = accounts.into_iter();
+    let mut account_iter: std::slice::Iter<'_, AccountInfo<'_>> = accounts.into_iter();
     let account = next_account_info(&mut account_iter)?;
 
     assert!(account.owner == program_id);
@@ -28,5 +31,6 @@ pub fn process_instruction(accounts: &[AccountInfo], program_id: &Pubkey) -> Pro
     math_stuff.sum += 1;
     math_stuff.serialize(&mut &mut account.data.borrow_mut()[..])?;
     msg!("Debug output complete.");
+
     Ok(())
 }

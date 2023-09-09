@@ -22,5 +22,6 @@ pub fn process_instruction(
         String::from_utf8(instruction_data.to_vec()).unwrap()
     );
 
-    hello::process_instruction(accounts, program_id)
+    // hello::process_instruction(accounts, program_id)
+    Ok(())
 }

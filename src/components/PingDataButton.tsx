@@ -26,12 +26,19 @@ const PingDataButton: FC<TransactionLinkProps> = (
       return;
     }
 
-    const seed = "creators.dao";
+    const seed = "creators.dao.abcdef";
+
     const shareAccount = await Web3.PublicKey.createWithSeed(
       publicKey,
       seed,
       PROGRAM_ID
     );
+
+    // const [shareAccount, bumpSeed] = Web3.PublicKey.findProgramAddressSync(
+    //   [publicKey.toBytes(), Buffer.from(seed)],
+    //   PROGRAM_ID
+    // );
+    // console.log(bumpSeed);
 
     console.log(shareAccount);
     console.log(shareAccount.toBase58());
@@ -60,7 +67,16 @@ const PingDataButton: FC<TransactionLinkProps> = (
       })
     );
 
-    console.log(instructions);
+    // instructions.push(
+    //   Web3.SystemProgram.assign({
+    //     accountPubkey: shareAccount,
+    //     basePubkey: publicKey,
+    //     seed,
+    //     programId: Web3.SystemProgram.programId,
+    //   })
+    // );
+
+    // console.log(instructions);
 
     const {
       value: { blockhash },
