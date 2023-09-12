@@ -1,11 +1,12 @@
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { CompileTime } from "../compile";
-import { VERSION, urlBase } from "../utils";
+import { VERSION } from "../utils";
 import GitpodPanel from "./GithubPanel";
 import { MyThemeSwitch } from "./MyThemeContext";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { MouseEvent, useState } from "react";
 import { MoreHoriz } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 const MyHeader = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -58,7 +59,7 @@ const MyHeader = () => {
       >
         {Object.keys(nameLinks).map((name) => (
           <MenuItem onClick={handleClose} key={name}>
-            <a href={`${urlBase}${nameLinks[name]}`}>{name}</a>
+            <Link to={nameLinks[name]}>{name}</Link>
           </MenuItem>
         ))}
       </Menu>
