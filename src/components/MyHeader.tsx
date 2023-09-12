@@ -6,6 +6,7 @@ import { MyThemeSwitch } from "./MyThemeContext";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { MouseEvent, useState } from "react";
 import { MoreHoriz } from "@mui/icons-material";
+
 const MyHeader = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -32,7 +33,7 @@ const MyHeader = () => {
           solana player: <b>{VERSION}</b>
         </span>
         <span style={{ marginLeft: "1rem" }}>
-          compile at : <b>{CompileTime}</b>
+          Compile at : <b>{CompileTime}</b>
         </span>
       </p>
 
