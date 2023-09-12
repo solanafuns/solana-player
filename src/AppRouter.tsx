@@ -33,19 +33,6 @@ const router = createBrowserRouter([
       <>
         <MyHeader />
         <div style={{ marginTop: "2rem" }}>
-          <div style={{ float: "left" }}>
-            <ul>
-              <li>
-                <a href="/basic">Basic</a>
-              </li>
-              <li>
-                <a href="/app">App</a>
-              </li>
-              <li>
-                <a href="/about">About</a>
-              </li>
-            </ul>
-          </div>
           <div>
             <Outlet />
           </div>
@@ -60,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <BasicPage />,
+      },
+      {
+        path: "about",
+        element: <h1>About us!!</h1>,
       },
     ],
   },
