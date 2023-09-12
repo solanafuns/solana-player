@@ -1,6 +1,6 @@
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { CompileTime } from "../compile";
-import { VERSION } from "../utils";
+import { VERSION, urlBase } from "../utils";
 import GitpodPanel from "./GithubPanel";
 import { MyThemeSwitch } from "./MyThemeContext";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
@@ -57,7 +57,7 @@ const MyHeader = () => {
       >
         {Object.keys(nameLinks).map((name) => (
           <MenuItem onClick={handleClose} key={name}>
-            <a href={nameLinks[name]}>{name}</a>
+            <a href={`${urlBase}${nameLinks[name]}`}>{name}</a>
           </MenuItem>
         ))}
       </Menu>

@@ -7,6 +7,7 @@ import {
 import MyHeader from "./components/MyHeader";
 import App from "./App";
 import BasicPage from "./pages/basic";
+import { urlBase } from "./utils";
 
 const ErrorPage = () => {
   const error: any = useRouteError();
@@ -17,7 +18,7 @@ const ErrorPage = () => {
       <p>
         <i>{error.statusText || error.message}</i>
         <p>
-          <a href="/">Go back to the home page</a>
+          <a href={urlBase}>Go back to the home page</a>
         </p>
       </p>
     </div>
@@ -26,7 +27,7 @@ const ErrorPage = () => {
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: urlBase,
     errorElement: <ErrorPage />,
 
     element: (
